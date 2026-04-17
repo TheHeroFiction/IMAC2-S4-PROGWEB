@@ -31,4 +31,17 @@ import MyGuessingGame from './components/MyGuessingGame.vue';
   font-weight: bold;
 }
 
+:global(body)
+{
+  background-color: white;
+}
+
+h1
+{
+  display: flex;
+  justify-content: center;
+  align-self: center;
+
+}
+
 </style>

@@ -1,12 +1,18 @@
 <template>
   <button id="my-button" v-on:click="handleClick">Load weapons</button>
     <div id="gallery-options" >
-      <input v-if="m_data" type="text" v-model="search" placeholder="Search weapon piece" />
+      <div id="search_bar">
+        <label v-if="m_data" for="weapon-name">Weapon name : </label>
+        <input v-if="m_data" id="weapon-name" type="text" v-model="search_name"/>
+
+        <label v-if="m_data" for="weapon-type">Weapon type : </label>
+        <input v-if="m_data" id="weapon-type" type="text" v-model="search_type"/>
+
+      </div>
       <label v-if="m_data" for="weapon-sort">Sort by : </label>
       <select v-if="m_data" v-model="weaponsSortBy" id="weapon-sort">
-        <option v-if="m_data" value="type">Type</option>
-        <option v-if="m_data" value="rarity">Rarity</option>
         <option v-if="m_data" value="name">Name</option>
+        <option v-if="m_data" value="type">Type</option>
       </select>
     </div>
     <div id="weapon-gallery" v-if="m_data">
@@ -19,8 +25,7 @@
           <p className="weapon-description-line" v-if="filteredWeaponData">Raw attack: {{weapon.attack.raw}}</p>
           <p className="weapon-description-line" v-if="filteredWeaponData">Display attack: {{weapon.attack.display}}</p>
           <p className="weapon-description-line" v-if="filteredWeaponData">Damage type: {{weapon.damageType}}</p>
-          <p className="weapon-description-line" v-if="filteredWeaponData">Assets: {{weapon.assets}}</p>
-          <img v-if="weapon.assets" :src = weapon.assets.image1>
+          <p className="weapon-description-line" v-if="filteredWeaponData">Elderseal: {{weapon.elderseal}}</p>
         </div>
       </div>
     </div>
@@ -37,26 +42,22 @@ const handleClick = async() => {
   m_data.value = await getWeaponsData()
 };
 
-const search = ref('')
+const search_name = ref('')
+const search_type = ref('')
 const weaponsSortBy = ref('name')
 
 const filteredWeaponData = computed( () => {
   let result =  m_data.value.filter(
-    (weapon) => weapon.name.toLowerCase().includes(search.value.toLowerCase())
-  )
-  console.log(result);
+    (weapon) => (weapon.name.toLowerCase().includes(search_name.value.toLowerCase())) && weapon.type.toLowerCase().includes(search_type.value.toLowerCase())
+  );
   result = result.toSorted((a,b) => {
     if (weaponsSortBy.value === 'name')
   {
     return a.name.localeCompare(b.name)
   }
-  else if (weaponsSortBy.value === 'type')
-  {
-    return a.type.localeCompare(b.type)
-  }
   else
   {
-    return a.rarity.localeCompare(b.rarity)
+    return a.type.localeCompare(b.type)
   }
   })
   return result
